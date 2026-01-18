@@ -83,7 +83,32 @@ To build an intelligent, automated, and insight-driven defect management platfor
 
 ---
 
-## 7. User Stories
+## 7. Success Metrics
+
+- Reduction in Mean Time to Resolve (MTTR)
+- Decrease in duplicate defect reports
+- Improved defect resolution accuracy
+- Increased system stability over time
+- Higher team productivity
+
+---
+
+## 8. Assumptions & Constraints
+
+### Assumptions
+
+- Users provide meaningful defect descriptions
+- Historical defect data is available for comparison
+
+### Constraints
+
+- AI accuracy depends on training data quality
+- Limited to text-based defect analysis initially
+- Free-tier cloud and tooling usage
+
+---
+
+## 9. User Stories
 
 This project is driven by 25 user stories covering:
 - Defect reporting
@@ -98,7 +123,7 @@ This project is driven by 25 user stories covering:
 
 ---
 
-## 8. MoSCoW Prioritization
+## 10. MoSCoW Prioritization
 
 ### Must Have
 - Defect reporting
@@ -125,7 +150,7 @@ This project is driven by 25 user stories covering:
 
 ---
 
-## 9. System Architecture
+## 11. System Architecture
 
 The system follows a modular, service-oriented architecture:
 
@@ -140,7 +165,7 @@ The system follows a modular, service-oriented architecture:
 
 ---
 
-## 10. Technology Stack
+## 12. Technology Stack
 
 ### Frontend
 - React.js
@@ -164,7 +189,7 @@ The system follows a modular, service-oriented architecture:
 
 ---
 
-## 11. GitHub Workflow & Branching Strategy
+## 13. GitHub Workflow & Branching Strategy
 
 This project follows **GitHub Flow**:
 
@@ -176,7 +201,7 @@ This project follows **GitHub Flow**:
 
 ---
 
-## 12. Docker & Local Setup
+## 14. Docker & Local Setup
 
 ### Prerequisites
 - Docker Desktop installed
@@ -194,7 +219,7 @@ The application will be accessible on http://localhost:8080.
 
 ---
 
-## 13. Proof of Work
+## 15. Proof of Work
 
 - GitHub repository with README
 - 25 user stories as GitHub Issues
