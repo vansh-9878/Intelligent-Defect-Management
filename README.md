@@ -1,7 +1,5 @@
 # Intelligent Defect Management Platform (IDMP)
 
-## 📌 Vision Document
-
 ---
 
 ## 1. Project Overview
@@ -195,9 +193,8 @@ This project follows **GitHub Flow**:
 
 - `main` branch contains stable code
 - Feature development is done on `feature/*` branches
+- Eg. feature/bug-report, feature/bug-report
 - Pull requests are used for merging
-
-📌 Screenshots of branches and commits are included as proof.
 
 ---
 
@@ -214,18 +211,5 @@ cd Intelligent-Defect-Management
 docker-compose up --build
 ```
 The application will be accessible on http://localhost:8080.
-
-📌 Screenshots of Docker build and running containers are provided.
-
----
-
-## 15. Proof of Work
-
-- GitHub repository with README
-- 25 user stories as GitHub Issues
-- Branching strategy screenshots
-- Docker build and run screenshots
-- Application running on localhost
-- Architecture and wireframe designs
 
 ---
