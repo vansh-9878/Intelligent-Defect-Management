@@ -1,10 +1,10 @@
-from flask import Flask
+from fastapi import FastAPI
+from src.logger import logging
 
-app = Flask(__name__)
+app = FastAPI(title="Intelligent Defect Management Platform")
 
-@app.route("/")
-def home():
-    return "Backend API is running"
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+@app.get("/")
+def root():
+    logging.info("Connected to backend")
+    return {"message": "IDMP Backend Running 🚀"}
