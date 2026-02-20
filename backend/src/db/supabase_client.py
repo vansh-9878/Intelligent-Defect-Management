@@ -7,7 +7,7 @@ from src.logger import logging
 
 class SupabaseClient:
     client=None
-    def __int__(self):
+    def __init__(self):
         try:
             SUPABASE_URL = os.getenv("SUPABASE_URL")
             SUPABASE_KEY = os.getenv("SUPABASE_KEY")
