@@ -9,7 +9,7 @@ from src.services.defect_services import (
     list_defects,
     get_defect,
     update_defect_status,
-    assign_defect,d
+    assign_defect,
 )
 from src.core.dependencies import require_roles, get_current_user
 

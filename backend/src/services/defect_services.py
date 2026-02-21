@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from src.db.supabase_client import SupabaseClient
 
-# ---------------- VALID STATUS FLOW ---------------- #
 supabase=SupabaseClient().client
 
 VALID_TRANSITIONS = {
