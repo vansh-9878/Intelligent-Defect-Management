@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from src.db.supabase_client import SupabaseClient
+from src.services.ai_client import classify_defect_ai
 
 supabase=SupabaseClient().client
 
@@ -17,16 +18,27 @@ VALID_TRANSITIONS = {
 
 
 def create_defect(data: dict, reporter_id: str):
+    ai_result = classify_defect_ai(
+        title=data.get("title"),
+        description=data.get("description"),
+        module=data.get("module"),
+    )
+
     payload = {
         **data,
         "reporter_id": reporter_id,
         "status": "OPEN",
-        # AI severity placeholder (will replace later)
-        "severity": "MEDIUM",
+        "severity": ai_result["severity"],
+        "assigned_team": ai_result["team"],
+        "duplicate_of": ai_result["duplicate_of"],
     }
 
     result = supabase.table("defects").insert(payload).execute()
-    return result.data[0]
+    return {
+        **result.data[0],
+        "is_duplicate": ai_result["is_duplicate"],
+        "similarity_score": ai_result["similarity_score"],
+    }
 
 
 
