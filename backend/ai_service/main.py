@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from ai_service.model import predict_severity, predict_team, generate_embedding
 
 from ai_service.vector_store import add_vector, search_similar
-import uuid
 
 app = FastAPI(title="IDMP AI Service")
 
@@ -12,6 +11,7 @@ class AIRequest(BaseModel):
     title: str
     description: str | None = None
     module: str | None = None
+    defect_id:str
 
 
 @app.post("/classify")
@@ -33,8 +33,7 @@ def classify_defect(req: AIRequest):
         is_duplicate = True
         duplicate_of = similar_id
 
-    new_id = str(uuid.uuid4())
-    add_vector(embedding, new_id)
+    add_vector(embedding,req.defect_id)
 
     return {
         "severity": severity,
