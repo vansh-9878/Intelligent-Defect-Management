@@ -21,7 +21,7 @@ def create_defect(data: dict, reporter_id: str):
     base_payload = {
         **data,
         "reporter_id": reporter_id,
-        "status": "OPEN",
+        "status": "ASSIGNED",
         "severity": "MEDIUM",
     }
 

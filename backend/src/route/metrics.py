@@ -6,7 +6,7 @@ router = APIRouter(prefix="/metrics", tags=["Metrics"])
 
 
 
-@router.get("/project")
+@router.get("/")
 def project_metrics(
     current_user=Depends(require_roles(["MANAGER", "ADMIN"]))
 ):

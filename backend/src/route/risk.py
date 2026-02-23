@@ -8,7 +8,6 @@ from src.services.risk_service import (
 router = APIRouter(prefix="/risk", tags=["Risk"])
 
 
-# ---------------- PROJECT RISK ---------------- #
 
 @router.get("/project")
 def project_risk(
@@ -17,7 +16,6 @@ def project_risk(
     return compute_project_risk()
 
 
-# ---------------- DEFECT RISK ---------------- #
 
 @router.get("/defect/{defect_id}")
 def defect_risk(
