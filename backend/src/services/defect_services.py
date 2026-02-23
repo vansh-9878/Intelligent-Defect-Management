@@ -70,6 +70,9 @@ def update_defect_status(defect_id: str, new_status: str):
 
     if new_status == "CLOSED":
         update_payload["resolved_at"] = datetime.now().isoformat()
+        
+    if new_status == "REOPENED":
+        update_payload["reopen_count"] = (defect.get("reopen_count") or 0) + 1
 
     updated = (
         supabase.table("defects")
