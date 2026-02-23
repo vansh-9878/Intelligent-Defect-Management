@@ -1,16 +1,16 @@
 from fastapi import HTTPException, status
 from src.db.supabase_client import SupabaseClient
 from src.services.ai_client import classify_defect_ai
+from datetime import datetime
 
 supabase=SupabaseClient().client
 
 VALID_TRANSITIONS = {
-    "OPEN": ["TRIAGED", "ASSIGNED"],
-    "TRIAGED": ["ASSIGNED"],
+    "OPEN": ["ASSIGNED"],
     "ASSIGNED": ["IN_PROGRESS"],
     "IN_PROGRESS": ["FIXED"],
-    "FIXED": ["VERIFIED"],
-    "VERIFIED": ["CLOSED", "REOPENED"],
+    "FIXED": ["VERIFICATION"],
+    "VERIFICATION": ["CLOSED", "REOPENED"],
     "REOPENED": ["ASSIGNED"],
     "CLOSED": [],
 }
@@ -27,7 +27,7 @@ def create_defect(data: dict, reporter_id: str):
     payload = {
         **data,
         "reporter_id": reporter_id,
-        "status": "OPEN",
+        "status": "ASSIGNED",
         "severity": ai_result["severity"],
         "assigned_team": ai_result["team"],
         "duplicate_of": ai_result["duplicate_of"],
@@ -66,9 +66,14 @@ def update_defect_status(defect_id: str, new_status: str):
             detail=f"Invalid status transition from {current_status} to {new_status}",
         )
 
+    update_payload = {"status": new_status}
+
+    if new_status == "CLOSED":
+        update_payload["resolved_at"] = datetime.now().isoformat()
+
     updated = (
         supabase.table("defects")
-        .update({"status": new_status})
+        .update(update_payload)
         .eq("id", defect_id)
         .execute()
     )

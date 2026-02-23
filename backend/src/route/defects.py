@@ -42,20 +42,41 @@ def get_defect_route(
 
 
 
-@router.put("/{defect_id}/status")
+@router.put("/{defect_id}/start")
 def update_status_route(
     defect_id: str,
-    payload: DefectStatusUpdate,
-    current_user=Depends(require_roles(["DEVELOPER", "MANAGER"])),
+    current_user=Depends(require_roles(["DEVELOPER", "ADMIN"])),
 ):
-    return update_defect_status(defect_id, payload.status)
+    return update_defect_status(defect_id,'IN_PROGRESS')
 
-
-
-@router.put("/{defect_id}/assign")
-def assign_route(
+@router.put("/{defect_id}/fixed")
+def update_status_route(
     defect_id: str,
-    payload: DefectAssign,
-    current_user=Depends(require_roles(["MANAGER", "ADMIN"])),
+    current_user=Depends(require_roles(["DEVELOPER","ADMIN"])),
 ):
-    return assign_defect(defect_id, payload.assigned_team)
+    return update_defect_status(defect_id,'FIXED')
+
+@router.put("/{defect_id}/verify")
+def update_status_route(
+    defect_id: str,
+    current_user=Depends(require_roles(["MANAGER","ADMIN"])),
+):
+    return update_defect_status(defect_id,'VERIFICATION')
+
+
+@router.put("/{defect_id}/closed")
+def update_status_route(
+    defect_id: str,
+    current_user=Depends(require_roles(["MANAGER","ADMIN"])),
+):
+    return update_defect_status(defect_id,'CLOSED')
+
+
+
+# @router.put("/{defect_id}/assign")
+# def assign_route(
+#     defect_id: str,
+#     payload: DefectAssign,
+#     current_user=Depends(require_roles(["MANAGER", "ADMIN"])),
+# ):
+#     return assign_defect(defect_id, payload.assigned_team)
