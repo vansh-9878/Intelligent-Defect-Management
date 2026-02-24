@@ -1,39 +1,55 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
+from constants import SEVERITY_LABELS,TEAM_LABELS
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
-def predict_severity(text: str) -> str:
-    text_lower = text.lower()
-
-    if any(word in text_lower for word in ["crash", "data loss", "payment failed"]):
-        return "CRITICAL"
-    if any(word in text_lower for word in ["error", "fails", "exception"]):
-        return "HIGH"
-    if any(word in text_lower for word in ["ui", "alignment", "typo"]):
-        return "LOW"
-    return "MEDIUM"
+severity_embeddings = {
+    label: model.encode(desc, normalize_embeddings=True)
+    for label, desc in SEVERITY_LABELS.items()
+}
 
 
-def predict_team(module: str) -> str:
-    if not module:
-        return "GENERAL"
+team_embeddings = {
+    label: model.encode(desc, normalize_embeddings=True)
+    for label, desc in TEAM_LABELS.items()
+}
 
-    m = module.lower()
 
-    if "payment" in m:
-        return "PAYMENTS"
-    if "auth" in m or "login" in m:
-        return "AUTH"
-    if "ui" in m or "frontend" in m:
-        return "FRONTEND"
-    if "api" in m or "backend" in m:
-        return "BACKEND"
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    return float(np.dot(a, b))
 
-    return "GENERAL"
 
+def predict_severity(text: str):
+    text_emb = model.encode(text, normalize_embeddings=True)
+
+    best_label = "MEDIUM"
+    best_score = -1.0
+
+    for label, emb in severity_embeddings.items():
+        score = cosine_similarity(text_emb, emb)
+        if score > best_score:
+            best_score = score
+            best_label = label
+
+    return best_label, round(best_score, 4)
+
+
+def predict_team(text: str):
+    text_emb = model.encode(text, normalize_embeddings=True)
+
+    best_label = "GENERAL"
+    best_score = -1.0
+
+    for label, emb in team_embeddings.items():
+        score = cosine_similarity(text_emb, emb)
+        if score > best_score:
+            best_score = score
+            best_label = label
+
+    return best_label, round(best_score, 4)
 
 def generate_embedding(text: str):
-    emb = model.encode(text)
+    emb = model.encode(text, normalize_embeddings=True)
     return emb.tolist()
