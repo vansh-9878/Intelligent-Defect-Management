@@ -159,11 +159,20 @@ The system follows a modular, service-oriented architecture:
 - Notification Service: Sends automated alerts
 - Docker: Containerized deployment
 
-📌 Detailed architecture diagram is provided in the documentation folder.
 
 ---
 
-## 12. Technology Stack
+## 12. Software Design
+
+The Intelligent Defect Management Platform follows a modular layered architecture with a FastAPI backend and a dedicated AI microservice for semantic classification and FAISS-based duplicate detection. The design emphasizes high cohesion, low coupling, and scalability to support efficient defect lifecycle management and data-driven risk analytics.
+
+<img width="940" height="678" alt="image" src="https://github.com/user-attachments/assets/878dd323-b9b4-4303-acf8-1c69e621788c" />
+
+Figma Design -> https://www.figma.com/design/IXdmfqNLv2ylYNoCoyWolD/Intelligent-DefectManagement?node-id=0-1&t=wdMiukfMCuQwejun-1
+
+---
+
+## 13. Technology Stack
 
 ### Frontend
 - React.js
@@ -187,7 +196,7 @@ The system follows a modular, service-oriented architecture:
 
 ---
 
-## 13. GitHub Workflow & Branching Strategy
+## 14. GitHub Workflow & Branching Strategy
 
 This project follows **GitHub Flow**:
 
@@ -198,7 +207,7 @@ This project follows **GitHub Flow**:
 
 ---
 
-## 14. Docker & Local Setup
+## 15. Docker & Local Setup
 
 ### Prerequisites
 - Docker Desktop installed
