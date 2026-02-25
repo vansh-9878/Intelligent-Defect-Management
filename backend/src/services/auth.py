@@ -4,6 +4,7 @@ from src.db.supabase_client import SupabaseClient
 from src.core.security import Security
 from supabase import Client
 
+
 class User:
     def __init__(self):
         self.supabase:Client=SupabaseClient().client
@@ -40,6 +41,7 @@ class User:
 
     def login_user(self,email: str, password: str):
         try:
+            logging.info("New login detected")
             user_res = self.supabase.table("users").select("*").eq("email", email).execute()
 
             if not user_res.data:
@@ -49,13 +51,13 @@ class User:
                 )
 
             user = user_res.data[0]
-
+            logging.info("found user")
             if not self.security.verify_password(password, user["hashed_password"]):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid credentials",
                 )
-
+            
             token = self.security.create_access_token(
                 {
                     "sub": user["id"],

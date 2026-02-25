@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
-from constants import SEVERITY_LABELS,TEAM_LABELS
+from ai_service.constants import SEVERITY_LABELS,TEAM_LABELS
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -33,7 +33,7 @@ def predict_severity(text: str):
             best_score = score
             best_label = label
 
-    return best_label, round(best_score, 4)
+    return best_label
 
 
 def predict_team(text: str):
@@ -48,7 +48,7 @@ def predict_team(text: str):
             best_score = score
             best_label = label
 
-    return best_label, round(best_score, 4)
+    return best_label
 
 def generate_embedding(text: str):
     emb = model.encode(text, normalize_embeddings=True)

@@ -39,6 +39,7 @@ TEAM_LABELS = {
     "BACKEND": (
         "api backend server database microservice endpoint "
         "business logic data processing service layer"
+        "App crashing"
     ),
     "GENERAL": (
         "general issue miscellaneous other uncategorized bug"
