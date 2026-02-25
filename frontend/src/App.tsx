@@ -21,6 +21,7 @@ type Screen =
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedDefectId, setSelectedDefectId] = useState<string | null>(null);
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
@@ -39,10 +40,20 @@ export default function App() {
     setCurrentScreen("dashboard");
   };
 
+  const handleLogout = () => {
+    Cookies.remove("token");
+    setIsLoggedIn(false);
+    setSelectedDefectId(null);
+    setCurrentScreen("login");
+  };
+
   const goToSignup = () => setCurrentScreen("signup");
   const goToLogin = () => setCurrentScreen("login");
 
-  const navigateTo = (screen: Screen) => {
+  const navigateTo = (screen: Screen, defectId?: string) => {
+    if (defectId) {
+      setSelectedDefectId(defectId);
+    }
     setCurrentScreen(screen);
   };
 
@@ -79,7 +90,7 @@ export default function App() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Dashboard onNavigate={navigateTo} />
+            <Dashboard onNavigate={navigateTo} onLogout={handleLogout} />
           </motion.div>
         )}
         {currentScreen === "report-defect" && isLoggedIn && (
@@ -90,7 +101,7 @@ export default function App() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <ReportDefect onNavigate={navigateTo} />
+            <ReportDefect onNavigate={navigateTo} onLogout={handleLogout} />
           </motion.div>
         )}
         {currentScreen === "defect-list" && isLoggedIn && (
@@ -101,20 +112,26 @@ export default function App() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <DefectList onNavigate={navigateTo} />
+            <DefectList onNavigate={navigateTo} onLogout={handleLogout} />
           </motion.div>
         )}
-        {currentScreen === "defect-details" && isLoggedIn && (
-          <motion.div
-            key="defect-details"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <DefectDetails onNavigate={navigateTo} />
-          </motion.div>
-        )}
+        {currentScreen === "defect-details" &&
+          isLoggedIn &&
+          selectedDefectId && (
+            <motion.div
+              key="defect-details"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <DefectDetails
+                onNavigate={navigateTo}
+                defectId={selectedDefectId ?? undefined}
+                onLogout={handleLogout}
+              />
+            </motion.div>
+          )}
         {currentScreen === "analytics" && isLoggedIn && (
           <motion.div
             key="analytics"
@@ -123,7 +140,7 @@ export default function App() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Analytics onNavigate={navigateTo} />
+            <Analytics onNavigate={navigateTo} onLogout={handleLogout} />
           </motion.div>
         )}
       </AnimatePresence>

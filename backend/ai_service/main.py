@@ -27,7 +27,7 @@ def classify_defect(req: AIRequest):
     is_duplicate = False
     duplicate_of = None
 
-    THRESHOLD = 0.75
+    THRESHOLD = 0.45
 
     if similar_id and score >= THRESHOLD:
         is_duplicate = True

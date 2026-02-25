@@ -18,7 +18,7 @@ router = APIRouter(prefix="/defects", tags=["Defects"])
 @router.post("/")
 def create_defect_route(
     defect: DefectCreate,
-    current_user=Depends(require_roles(["TESTER","USER"])),
+    current_user=Depends(require_roles(["TESTER","USER","ADMIN"])),
 ):
     created = create_defect(defect.dict(), current_user["id"])
     return created

@@ -1,47 +1,88 @@
-import { useState } from 'react';
-import { TopNav } from './TopNav';
-import { motion } from 'motion/react';
-import { FileText, Loader2, CheckCircle2 } from 'lucide-react';
+import { useState } from "react";
+import { TopNav } from "./TopNav";
+import { motion } from "motion/react";
+import { FileText, Loader2, CheckCircle2 } from "lucide-react";
+import Cookies from "js-cookie";
 
-type Screen = 'dashboard' | 'report-defect' | 'defect-list' | 'analytics' | 'defect-details';
+type Screen =
+  | "dashboard"
+  | "report-defect"
+  | "defect-list"
+  | "analytics"
+  | "defect-details";
 
 interface ReportDefectProps {
   onNavigate: (screen: Screen) => void;
+  onLogout: () => void;
 }
 
-export function ReportDefect({ onNavigate }: ReportDefectProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [module, setModule] = useState('');
-  const [environment, setEnvironment] = useState('');
+export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [module, setModule] = useState("");
+  const [environment, setEnvironment] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const token = Cookies.get("token");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/defects/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          module,
+          environment,
+        }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || "Failed to create defect");
+      }
+
       setIsSuccess(true);
+
+      // reset form
+      setTitle("");
+      setDescription("");
+      setModule("");
+      setEnvironment("");
+
+      // auto navigate after success (nice UX)
       setTimeout(() => {
-        setIsSuccess(false);
-        setTitle('');
-        setDescription('');
-        setModule('');
-        setEnvironment('');
-      }, 2000);
-    }, 1500);
+        onNavigate("dashboard");
+      }, 1200);
+    } catch (err) {
+      console.error("Create defect failed:", err);
+      alert("Failed to submit defect");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
-    onNavigate('dashboard');
+    onNavigate("dashboard");
   };
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <TopNav onNavigate={onNavigate} currentScreen="report-defect" />
-      
+      <TopNav
+        onNavigate={onNavigate}
+        currentScreen="report-defect"
+        onLogout={onLogout}
+      />
+
       <div className="max-w-4xl mx-auto p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -68,22 +109,23 @@ export function ReportDefect({ onNavigate }: ReportDefectProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Defect Title */}
+            {/* Title */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Defect Title *</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Defect Title *
+              </label>
               <motion.input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                onFocus={() => setFocusedField('title')}
+                onFocus={() => setFocusedField("title")}
                 onBlur={() => setFocusedField(null)}
-                animate={{
-                  scale: focusedField === 'title' ? 1.01 : 1,
-                }}
-                transition={{ duration: 0.2 }}
+                animate={{ scale: focusedField === "title" ? 1.01 : 1 }}
                 className={`w-full bg-[#2A2A2A] border ${
-                  focusedField === 'title' ? 'border-[#3B9EBF] shadow-lg shadow-[#3B9EBF]/10' : 'border-gray-700'
-                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none transition-all`}
+                  focusedField === "title"
+                    ? "border-[#3B9EBF]"
+                    : "border-gray-700"
+                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none`}
                 placeholder="Brief description of the defect"
                 required
               />
@@ -91,40 +133,42 @@ export function ReportDefect({ onNavigate }: ReportDefectProps) {
 
             {/* Description */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Description *</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Description *
+              </label>
               <motion.textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                onFocus={() => setFocusedField('description')}
+                onFocus={() => setFocusedField("description")}
                 onBlur={() => setFocusedField(null)}
-                animate={{
-                  scale: focusedField === 'description' ? 1.01 : 1,
-                }}
-                transition={{ duration: 0.2 }}
-                className={`w-full bg-[#2A2A2A] border ${
-                  focusedField === 'description' ? 'border-[#3B9EBF] shadow-lg shadow-[#3B9EBF]/10' : 'border-gray-700'
-                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none transition-all resize-none`}
+                animate={{ scale: focusedField === "description" ? 1.01 : 1 }}
                 rows={6}
-                placeholder="Detailed description of the defect, steps to reproduce, expected vs actual behavior..."
+                className={`w-full bg-[#2A2A2A] border ${
+                  focusedField === "description"
+                    ? "border-[#3B9EBF]"
+                    : "border-gray-700"
+                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none resize-none`}
+                placeholder="Steps to reproduce..."
                 required
               />
             </div>
 
-            {/* Affected Module */}
+            {/* Module */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Affected Module *</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Affected Module *
+              </label>
               <motion.select
                 value={module}
                 onChange={(e) => setModule(e.target.value)}
-                onFocus={() => setFocusedField('module')}
+                onFocus={() => setFocusedField("module")}
                 onBlur={() => setFocusedField(null)}
-                animate={{
-                  scale: focusedField === 'module' ? 1.01 : 1,
-                }}
-                transition={{ duration: 0.2 }}
+                animate={{ scale: focusedField === "module" ? 1.01 : 1 }}
                 className={`w-full bg-[#2A2A2A] border ${
-                  focusedField === 'module' ? 'border-[#3B9EBF] shadow-lg shadow-[#3B9EBF]/10' : 'border-gray-700'
-                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none transition-all`}
+                  focusedField === "module"
+                    ? "border-[#3B9EBF]"
+                    : "border-gray-700"
+                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none`}
                 required
               >
                 <option value="">Select module...</option>
@@ -137,23 +181,24 @@ export function ReportDefect({ onNavigate }: ReportDefectProps) {
               </motion.select>
             </div>
 
-            {/* Environment Details */}
+            {/* Environment */}
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Environment Details *</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Environment Details *
+              </label>
               <motion.input
                 type="text"
                 value={environment}
                 onChange={(e) => setEnvironment(e.target.value)}
-                onFocus={() => setFocusedField('environment')}
+                onFocus={() => setFocusedField("environment")}
                 onBlur={() => setFocusedField(null)}
-                animate={{
-                  scale: focusedField === 'environment' ? 1.01 : 1,
-                }}
-                transition={{ duration: 0.2 }}
+                animate={{ scale: focusedField === "environment" ? 1.01 : 1 }}
                 className={`w-full bg-[#2A2A2A] border ${
-                  focusedField === 'environment' ? 'border-[#3B9EBF] shadow-lg shadow-[#3B9EBF]/10' : 'border-gray-700'
-                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none transition-all`}
-                placeholder="e.g., Production, Chrome 120, Windows 11"
+                  focusedField === "environment"
+                    ? "border-[#3B9EBF]"
+                    : "border-gray-700"
+                } rounded-lg px-4 py-3 text-gray-100 focus:outline-none`}
+                placeholder="e.g., Production, Chrome 120"
                 required
               />
             </div>
@@ -163,9 +208,7 @@ export function ReportDefect({ onNavigate }: ReportDefectProps) {
               <motion.button
                 type="submit"
                 disabled={isSubmitting || isSuccess}
-                whileHover={{ scale: isSubmitting || isSuccess ? 1 : 1.02 }}
-                whileTap={{ scale: isSubmitting || isSuccess ? 1 : 0.98 }}
-                className="flex-1 bg-gradient-to-r from-[#3B9EBF] to-[#2A7A94] text-white py-3 rounded-lg font-medium hover:from-[#45B0D1] hover:to-[#3188A6] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 bg-gradient-to-r from-[#3B9EBF] to-[#2A7A94] text-white py-3 rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -181,14 +224,12 @@ export function ReportDefect({ onNavigate }: ReportDefectProps) {
                   <span>Submit Defect</span>
                 )}
               </motion.button>
-              
+
               <motion.button
                 type="button"
                 onClick={handleCancel}
                 disabled={isSubmitting}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 bg-[#2A2A2A] text-gray-300 py-3 rounded-lg font-medium hover:bg-[#333333] transition-all border border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 bg-[#2A2A2A] text-gray-300 py-3 rounded-lg font-medium border border-gray-700 disabled:opacity-50"
               >
                 Cancel
               </motion.button>
