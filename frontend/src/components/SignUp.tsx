@@ -27,7 +27,7 @@ export function SignupPage({ onSignup, onGoLogin }: SignupPageProps) {
         body: JSON.stringify({
           email,
           password,
-          role: "USER",
+          role: "USER", // always USER
         }),
       });
 
@@ -37,6 +37,13 @@ export function SignupPage({ onSignup, onGoLogin }: SignupPageProps) {
 
       const data = await res.json();
 
+      // ✅ IMPORTANT: store role
+      Cookies.set("role", "USER", {
+        expires: 1,
+        sameSite: "lax",
+      });
+
+      // ✅ store token if returned
       if (data.access_token) {
         Cookies.set("token", data.access_token, {
           expires: 1,

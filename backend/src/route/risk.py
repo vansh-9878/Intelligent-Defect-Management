@@ -11,7 +11,7 @@ router = APIRouter(prefix="/risk", tags=["Risk"])
 
 @router.get("/project")
 def project_risk(
-    current_user=Depends(require_roles(["MANAGER", "ADMIN"]))
+    current_user=Depends(require_roles(["MANAGER", "ADMIN","DEVELOPER","TESTER"]))
 ):
     return compute_project_risk()
 
@@ -20,7 +20,7 @@ def project_risk(
 @router.get("/defect/{defect_id}")
 def defect_risk(
     defect_id: str,
-    current_user=Depends(require_roles(["MANAGER", "ADMIN"]))
+    current_user=Depends(require_roles(["MANAGER", "ADMIN","DEVELOPER","TESTER"]))
 ):
     result = get_defect_risk(defect_id)
 

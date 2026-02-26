@@ -49,6 +49,13 @@ def update_status_route(
 ):
     return update_defect_status(defect_id,'IN_PROGRESS')
 
+@router.put("/{defect_id}/reopen")
+def update_status_route(
+    defect_id: str,
+    current_user=Depends(require_roles(["Manager", "ADMIN","DEVELOPER"])),
+):
+    return update_defect_status(defect_id,'REOPENED')
+
 @router.put("/{defect_id}/fixed")
 def update_status_route(
     defect_id: str,

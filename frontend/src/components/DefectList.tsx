@@ -129,6 +129,7 @@ export function DefectList({ onNavigate, onLogout }: DefectListProps) {
         onNavigate={onNavigate}
         currentScreen="defect-list"
         onLogout={onLogout}
+        role={Cookies.get("role")}
       />
 
       <div className="max-w-7xl mx-auto p-8">

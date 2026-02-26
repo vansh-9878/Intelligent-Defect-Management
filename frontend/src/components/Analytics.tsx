@@ -196,6 +196,7 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
         onNavigate={onNavigate}
         currentScreen="analytics"
         onLogout={onLogout}
+        role={Cookies.get("role")}
       />
 
       <div className="max-w-7xl mx-auto p-8">

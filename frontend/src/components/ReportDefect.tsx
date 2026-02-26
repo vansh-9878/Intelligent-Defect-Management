@@ -58,9 +58,9 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
       setModule("");
       setEnvironment("");
 
-      setTimeout(() => {
-        onNavigate("dashboard");
-      }, 1200);
+      // setTimeout(() => {
+      //   onNavigate("dashboard");
+      // }, 1200);
     } catch (err) {
       console.error("Create defect failed:", err);
       alert("Failed to submit defect");
@@ -69,9 +69,9 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
     }
   };
 
-  const handleCancel = () => {
-    onNavigate("dashboard");
-  };
+  // const handleCancel = () => {
+  //   onNavigate("dashboard");
+  // };
 
   return (
     <div className="min-h-screen bg-[#121212]">
@@ -79,6 +79,7 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
         onNavigate={onNavigate}
         currentScreen="report-defect"
         onLogout={onLogout}
+        role={Cookies.get("role")}
       />
 
       <div className="max-w-4xl mx-auto p-8">
@@ -218,14 +219,14 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
                 )}
               </motion.button>
 
-              <motion.button
+              {/* <motion.button
                 type="button"
                 onClick={handleCancel}
                 disabled={isSubmitting}
                 className="px-8 bg-[#2A2A2A] text-gray-300 py-3 rounded-lg font-medium border border-gray-700 disabled:opacity-50"
               >
                 Cancel
-              </motion.button>
+              </motion.button> */}
             </div>
           </form>
         </motion.div>

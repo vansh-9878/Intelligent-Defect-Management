@@ -13,8 +13,8 @@ VALID_TRANSITIONS = {
     "IN_PROGRESS": ["FIXED"],
     "FIXED": ["VERIFICATION"],
     "VERIFICATION": ["CLOSED", "REOPENED"],
-    "REOPENED": ["ASSIGNED"],
-    "CLOSED": [],
+    "REOPENED": ["IN_PROGRESS"],
+    "CLOSED": ["REOPENED"],
 }
 
 

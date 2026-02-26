@@ -18,30 +18,53 @@ type Screen =
   | "defect-details"
   | "analytics";
 
+const getDefaultScreenForRole = (role: string | null): Screen => {
+  switch (role) {
+    case "USER":
+      return "report-defect";
+    case "TESTER":
+    case "DEVELOPER":
+    case "MANAGER":
+    case "ADMIN":
+      return "dashboard";
+    default:
+      return "dashboard";
+  }
+};
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedDefectId, setSelectedDefectId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   useEffect(() => {
     const token = Cookies.get("token");
-    if (token) {
+    const userRole = Cookies.get("role");
+
+    if (token && userRole) {
       setIsLoggedIn(true);
-      setCurrentScreen("dashboard");
+      setRole(userRole);
+      setCurrentScreen(getDefaultScreenForRole(userRole));
     }
   }, []);
 
   const handleLogin = () => {
+    const userRole = Cookies.get("role");
+    setRole(userRole || null);
     setIsLoggedIn(true);
-    setCurrentScreen("dashboard");
+    setCurrentScreen(getDefaultScreenForRole(userRole));
   };
 
   const handleSignup = () => {
+    const userRole = Cookies.get("role");
+    setRole(userRole || null);
     setIsLoggedIn(true);
-    setCurrentScreen("dashboard");
+    setCurrentScreen(getDefaultScreenForRole(userRole));
   };
 
   const handleLogout = () => {
     Cookies.remove("token");
+    Cookies.remove("role");
     setIsLoggedIn(false);
     setSelectedDefectId(null);
     setCurrentScreen("login");

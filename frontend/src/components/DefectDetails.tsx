@@ -3,6 +3,7 @@ import { TopNav } from "./TopNav";
 import { motion } from "motion/react";
 import { ArrowLeft, Calendar, Loader2, CheckCircle2 } from "lucide-react";
 import Cookies from "js-cookie";
+import { canUpdateStatus } from "../utils/rbac";
 
 type Screen =
   | "dashboard"
@@ -39,6 +40,7 @@ export function DefectDetails({
   const [loading, setLoading] = useState(true);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [statusUpdated, setStatusUpdated] = useState(false);
+  const role = Cookies.get("role") as any;
   console.log(defectId);
   const token = Cookies.get("token");
 
@@ -74,6 +76,8 @@ export function DefectDetails({
     if (s === "IN_PROGRESS") return "fixed";
     if (s === "FIXED") return "verify";
     if (s === "VERIFICATION") return "closed";
+    if (s === "CLOSED") return "reopen";
+    if (s === "REOPENED") return "start";
 
     return null;
   };
@@ -85,7 +89,8 @@ export function DefectDetails({
     if (s === "IN_PROGRESS") return "Mark as Fixed";
     if (s === "FIXED") return "Send to Verification";
     if (s === "VERIFICATION") return "Close Defect";
-    if (s === "CLOSED") return "No further actions";
+    if (s === "CLOSED") return "Reopen Defect";
+    if (s === "REOPENED") return "Start Progress";
 
     return "Update Status";
   };
@@ -143,6 +148,7 @@ export function DefectDetails({
         onNavigate={onNavigate}
         currentScreen="defect-details"
         onLogout={onLogout}
+        role={Cookies.get("role")}
       />
 
       <div className="max-w-5xl mx-auto p-8">
@@ -207,7 +213,8 @@ export function DefectDetails({
             disabled={
               isUpdatingStatus ||
               statusUpdated ||
-              !getNextStatusEndpoint(defect.status)
+              !getNextStatusEndpoint(defect.status) ||
+              !canUpdateStatus(role, defect.status)
             }
             className="bg-gradient-to-r from-[#3B9EBF] to-[#2A7A94] text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 flex items-center gap-2"
           >

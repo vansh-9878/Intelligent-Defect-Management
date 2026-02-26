@@ -41,6 +41,11 @@ export function LoginPage({ onLogin, onGoSignup }: LoginPageProps) {
         secure: false,
         sameSite: "lax",
       });
+      Cookies.set("role", data.role, {
+        expires: 1,
+        secure: false,
+        sameSite: "lax",
+      });
 
       onLogin();
     } catch (err) {

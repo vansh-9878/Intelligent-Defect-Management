@@ -19,5 +19,5 @@ def signup(user: UserCreate):
 
 @router.post("/login", response_model=TokenResponse)
 def login(user: UserLogin):
-    token, _ = auth_methods.login_user(user.email, user.password)
-    return {"access_token": token}
+    token, u = auth_methods.login_user(user.email, user.password)
+    return {"access_token": token,"role":u["role"]}

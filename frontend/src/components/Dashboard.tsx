@@ -55,7 +55,17 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
           headers,
         });
         const defectsData = await defectsRes.json();
-        setDefects(defectsData || []);
+
+        if (Array.isArray(defectsData)) {
+          setDefects(defectsData);
+        } else if (Array.isArray(defectsData?.data)) {
+          setDefects(defectsData.data);
+        } else if (Array.isArray(defectsData?.defects)) {
+          setDefects(defectsData.defects);
+        } else {
+          console.warn("Unexpected defects response:", defectsData);
+          setDefects([]);
+        }
 
         try {
           const riskRes = await fetch("http://127.0.0.1:8000/risk/project", {
@@ -155,6 +165,7 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
         onNavigate={onNavigate}
         currentScreen="dashboard"
         onLogout={onLogout}
+        role={Cookies.get("role")}
       />
       <div className="max-w-7xl mx-auto p-8">
         <motion.div
