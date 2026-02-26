@@ -16,7 +16,7 @@ from src.core.dependencies import require_roles, get_current_user
 router = APIRouter(prefix="/defects", tags=["Defects"])
 
 @router.post("/")
-def create_defect_route(
+async def create_defect_route(
     defect: DefectCreate,
     current_user=Depends(require_roles(["TESTER","USER","ADMIN"])),
 ):

@@ -2,6 +2,8 @@ from fastapi import HTTPException, status
 from src.db.supabase_client import SupabaseClient
 from src.services.ai_client import classify_defect_ai
 from datetime import datetime
+import asyncio
+from src.services.notification_service import notify_defect_created
 
 supabase=SupabaseClient().client
 
@@ -16,6 +18,18 @@ VALID_TRANSITIONS = {
 }
 
 
+def get_duplicate_details(duplicate_id: str):
+    if not duplicate_id:
+        return None
+
+    res = supabase.table("defects").select(
+        "id,title,severity,status,assigned_team"
+    ).eq("id", duplicate_id).execute()
+
+    if not res.data:
+        return None
+
+    return res.data[0]
 
 def create_defect(data: dict, reporter_id: str):
     base_payload = {
@@ -41,9 +55,22 @@ def create_defect(data: dict, reporter_id: str):
         "assigned_team": ai_result["team"],
         "duplicate_of": ai_result["duplicate_of"],
     }
-
     supabase.table("defects").update(update_payload).eq("id", defect_id).execute()
-
+    fresh_res = supabase.table("defects").select("*").eq("id", defect_id).execute()
+    updated_defect = fresh_res.data[0]
+    duplicate_details = None
+    if ai_result.get("is_duplicate") and ai_result.get("duplicate_of"):
+        duplicate_details = get_duplicate_details(ai_result["duplicate_of"])
+    asyncio.create_task(
+        notify_defect_created(
+            updated_defect,
+            {
+                "duplicate_of": ai_result["duplicate_of"],
+                "similarity_score": ai_result["similarity_score"],
+                "duplicate_details": duplicate_details,
+            } if ai_result.get("is_duplicate") else None,
+        )
+    )
     return {
         **defect,
         **update_payload,
