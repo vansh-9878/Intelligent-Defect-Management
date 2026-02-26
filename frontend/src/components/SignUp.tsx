@@ -77,7 +77,6 @@ export function SignupPage({ onSignup, onGoLogin }: SignupPageProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
             <div>
               <label className="block text-sm text-gray-300 mb-2">Email</label>
               <motion.div

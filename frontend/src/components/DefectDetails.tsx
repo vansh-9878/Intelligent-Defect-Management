@@ -67,11 +67,10 @@ export function DefectDetails({
     fetchDefect();
   }, [defectId, token]);
 
-  // ✅ STATUS FLOW (FIXED)
   const getNextStatusEndpoint = (status: string) => {
     const s = status?.toUpperCase();
 
-    if (s === "ASSIGNED") return "start"; // -> IN_PROGRESS
+    if (s === "ASSIGNED") return "start";
     if (s === "IN_PROGRESS") return "fixed";
     if (s === "FIXED") return "verify";
     if (s === "VERIFICATION") return "closed";
@@ -91,7 +90,6 @@ export function DefectDetails({
     return "Update Status";
   };
 
-  // ✅ update status
   const handleUpdateStatus = async () => {
     if (!defect) return;
 
@@ -156,7 +154,6 @@ export function DefectDetails({
           Back to Defect List
         </motion.button>
 
-        {/* Header */}
         <div className="bg-[#1E1E1E] border border-gray-800 rounded-xl p-8 mb-6">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-[#3B9EBF] font-mono text-lg">
@@ -174,7 +171,6 @@ export function DefectDetails({
 
           <h3 className="text-2xl text-gray-100 mb-4">{defect.title}</h3>
 
-          {/* ✅ description added */}
           <p className="text-gray-300 mb-6">{defect.description}</p>
 
           <div className="grid grid-cols-4 gap-4 pt-6 border-t border-gray-800">
@@ -205,7 +201,6 @@ export function DefectDetails({
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-4">
           <motion.button
             onClick={handleUpdateStatus}

@@ -73,7 +73,6 @@ export function DefectList({ onNavigate, onLogout }: DefectListProps) {
 
   const token = Cookies.get("token");
 
-  // ✅ Fetch defects
   useEffect(() => {
     const fetchDefects = async () => {
       try {
@@ -100,7 +99,6 @@ export function DefectList({ onNavigate, onLogout }: DefectListProps) {
     fetchDefects();
   }, [token]);
 
-  // ✅ Filtering + search
   const filteredDefects = defects.filter((defect) => {
     const matchesSeverity =
       severityFilter === "all" ||
@@ -154,7 +152,6 @@ export function DefectList({ onNavigate, onLogout }: DefectListProps) {
           </div>
         </motion.div>
 
-        {/* Filters */}
         <div className="bg-[#1E1E1E] border border-gray-800 rounded-xl p-6 mb-6 flex items-center gap-6">
           <div className="flex items-center gap-2 text-gray-300">
             <Filter className="w-5 h-5" />
@@ -190,7 +187,6 @@ export function DefectList({ onNavigate, onLogout }: DefectListProps) {
           </div>
         </div>
 
-        {/* Table */}
         <div className="bg-[#1E1E1E] border border-gray-800 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">

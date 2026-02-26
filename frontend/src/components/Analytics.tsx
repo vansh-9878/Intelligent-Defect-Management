@@ -38,9 +38,6 @@ interface Defect {
   reopen_count?: number;
 }
 
-/* ===================== HELPERS ===================== */
-
-// 🔥 handle AI formatted severity like ["CRITICAL",0.41]
 function normalizeSeverity(sev?: string): string {
   if (!sev) return "MEDIUM";
 
@@ -75,8 +72,6 @@ function computeRisk(defect: Defect) {
   return severityWeight * 0.6 + reopenFactor * 0.25 + ageFactor * 0.15;
 }
 
-/* ===================== COMPONENT ===================== */
-
 export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [defects, setDefects] = useState<Defect[]>([]);
@@ -84,8 +79,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
   const [loading, setLoading] = useState(true);
 
   const token = Cookies.get("token");
-
-  /* ===================== FETCH ===================== */
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +90,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           Authorization: `Bearer ${token}`,
         };
 
-        // 🔹 metrics
         const metricsRes = await fetch("http://127.0.0.1:8000/metrics/", {
           headers,
         });
@@ -107,7 +99,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           setMetrics(metricsData);
         }
 
-        // 🔹 defects (for graph)
         const defectsRes = await fetch("http://127.0.0.1:8000/defects/", {
           headers,
         });
@@ -117,7 +108,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           setDefects(defectsData || []);
         }
 
-        // 🔹 project risk
         const riskRes = await fetch("http://127.0.0.1:8000/risk/project", {
           headers,
         });
@@ -136,15 +126,11 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
     fetchData();
   }, [token]);
 
-  /* ===================== DERIVED ===================== */
-
   const mttrDays = metrics ? (metrics.mttr_hours / 24).toFixed(2) : "0";
   const recurrenceRate = metrics
     ? metrics.recurrence_rate_percent.toFixed(2)
     : "0";
   const totalClosed = metrics?.status_summary?.CLOSED ?? 0;
-
-  /* ===================== REAL RISK TREND ===================== */
 
   const riskTrendData = useMemo(() => {
     if (!defects.length) return [];
@@ -163,7 +149,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
       monthMap[monthKey].push(risk);
     });
 
-    // ✅ sort chronologically
     return Object.entries(monthMap)
       .sort(([a], [b]) => (a > b ? 1 : -1))
       .map(([key, risks]) => {
@@ -180,8 +165,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
       });
   }, [defects]);
 
-  /* ===================== LOADING ===================== */
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-400">
@@ -189,8 +172,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
       </div>
     );
   }
-
-  /* ===================== UI ===================== */
 
   const metricsCards = [
     {
@@ -226,7 +207,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           Analytics & Metrics
         </motion.h2>
 
-        {/* KPI cards */}
         <div className="grid grid-cols-2 gap-6 mb-8">
           {metricsCards.map((metric, index) => {
             const Icon = metric.icon;
@@ -251,7 +231,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           })}
         </div>
 
-        {/* small metrics */}
         <div className="grid grid-cols-4 gap-6 mb-8">
           <MetricBox
             label="Total Defects Closed"
@@ -265,7 +244,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
           />
         </div>
 
-        {/* 🔥 REAL GRAPH */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -293,8 +271,6 @@ export function Analytics({ onNavigate, onLogout }: AnalyticsProps) {
     </div>
   );
 }
-
-/* ===================== SMALL COMPONENT ===================== */
 
 function MetricBox({
   label,

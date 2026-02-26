@@ -41,7 +41,6 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
 
   const token = Cookies.get("token");
 
-  // ✅ Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,14 +51,12 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
           Authorization: `Bearer ${token}`,
         };
 
-        // 🔹 Fetch defects
         const defectsRes = await fetch("http://127.0.0.1:8000/defects/", {
           headers,
         });
         const defectsData = await defectsRes.json();
         setDefects(defectsData || []);
 
-        // 🔹 Fetch project risk (may fail if role not allowed)
         try {
           const riskRes = await fetch("http://127.0.0.1:8000/risk/project", {
             headers,
@@ -81,13 +78,11 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
     fetchData();
   }, [token]);
 
-  // ✅ KPI calculations
   const totalDefects = defects.length;
   const openDefects = defects.filter(
     (d) => !["CLOSED", "FIXED"].includes(d.status),
   ).length;
 
-  // MTTR calculation (simple)
   const resolvedDefects = defects.filter((d) => d.created_at && d.resolved_at);
 
   const avgMTTR =
@@ -103,7 +98,6 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
         ).toFixed(1)
       : "0";
 
-  // ✅ Severity aggregation
   const severityMap: Record<string, number> = {
     CRITICAL: 0,
     HIGH: 0,
@@ -171,7 +165,6 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
           <h2 className="text-3xl text-gray-100 mb-8">Dashboard</h2>
         </motion.div>
 
-        {/* KPI Cards */}
         <div className="grid grid-cols-3 gap-6 mb-8">
           {kpis.map((kpi, index) => {
             const Icon = kpi.icon;
@@ -196,7 +189,6 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
           })}
         </div>
 
-        {/* Risk Score */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -219,7 +211,6 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
           </div>
         </motion.div>
 
-        {/* Severity Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -231,7 +222,7 @@ export function Dashboard({ onNavigate, onLogout }: DashboardProps) {
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A" />
               <XAxis dataKey="name" stroke="#6B7280" />
               <YAxis stroke="#6B7280" />
-              <Tooltip />
+              <Tooltip cursor={false} />
               <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                 {severityData.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />

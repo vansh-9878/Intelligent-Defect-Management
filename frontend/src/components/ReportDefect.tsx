@@ -53,13 +53,11 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
 
       setIsSuccess(true);
 
-      // reset form
       setTitle("");
       setDescription("");
       setModule("");
       setEnvironment("");
 
-      // auto navigate after success (nice UX)
       setTimeout(() => {
         onNavigate("dashboard");
       }, 1200);
@@ -109,7 +107,6 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title */}
             <div>
               <label className="block text-sm text-gray-300 mb-2">
                 Defect Title *
@@ -131,7 +128,6 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
               />
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-sm text-gray-300 mb-2">
                 Description *
@@ -153,7 +149,6 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
               />
             </div>
 
-            {/* Module */}
             <div>
               <label className="block text-sm text-gray-300 mb-2">
                 Affected Module *
@@ -181,7 +176,6 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
               </motion.select>
             </div>
 
-            {/* Environment */}
             <div>
               <label className="block text-sm text-gray-300 mb-2">
                 Environment Details *
@@ -203,7 +197,6 @@ export function ReportDefect({ onNavigate, onLogout }: ReportDefectProps) {
               />
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-4 pt-4">
               <motion.button
                 type="submit"
